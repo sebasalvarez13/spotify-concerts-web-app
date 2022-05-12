@@ -5,4 +5,10 @@ def create_app():
     #Define secret key to encrypt/secure cookies and session data
     app.config['SECRET_KEY'] = 'asdfghjkl'
 
+    from .views import views
+    from .auth import auth
+
+    app.register_blueprint(views, url_prefix = '/')
+    app.register_blueprint(auth, url_prefix = '/')
+
     return app 
