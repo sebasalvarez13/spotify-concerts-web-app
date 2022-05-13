@@ -13,7 +13,7 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(100), unique = True)
     username = db.Column(db.String(100), unique = True)
     password = db.Column(db.String(100))
-    songs = db.relationship('Songs')
+    songs = db.relationship('Song')
 
 class Song(db.Model):
     id = db.Column(db.Integer, primary_key = True)
