@@ -11,17 +11,35 @@
 
             <!-- With this block we will alow the child template to give us some content we'll fill in -->
             <title>{% block title %}Title{% endblock %}</title>
-
-            {% block head %}Form title{% endblock %}
-            
+            <center>
+                {% block head %}Form title{% endblock %}
+            </center>
         </head>
         
         <body>
-            <!-- Check if child emplate is he register or login page-->  
-            {% block content %}
-            Form input
-            {% endblock %}
-                        
+            <center>
+                <!--Flash message-->
+                {% with messages = get_flashed_messages(with_categories = true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            {% if category == 'error' %}
+                                <div class='alert alert-danger alter-dismissable fade show' role='alert'>
+                                    {{ message }}
+                                </div>
+                            {% else %}
+                                <div class='alert alert-success alter-dismissable fade show' role='alert'>
+                                    {{ message }}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <!-- Check if child emplate is he register or login page-->  
+                {% block content %}
+                Form input
+                {% endblock %}
+            </center>         
             <!-- Bootstrap JS Bundle: includes every plugin and dependency-->
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 
