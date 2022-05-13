@@ -1,12 +1,11 @@
 '''Here is where we create our database models'''
 
-from pytz import timezone
 from . import db
 #UserMixin is a custom class that will give our user object specific things for our login
 from flask_login import UserMixin
 from sqlalchemy.sql import func
 
-class User(db.model, UserMixin):
+class User(db.Model, UserMixin):
     #Define the columns for our table
     id = db.Column(db.Integer, primary_key = True)
     first_name = db.Column(db.String(100))
@@ -16,10 +15,10 @@ class User(db.model, UserMixin):
     password = db.Column(db.String(100))
     songs = db.relationship('Songs')
 
-class Song(db.model):
-    id = db.column(db.Integer, primary_key = True)
+class Song(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
     song = db.Column(db.String(100))
     artist = db.Column(db.String(100))
     album = db.Column(db.String(100))
     played_at = db.Column(db.DateTime(timezone = True))
-    user_id = db.Column(db.Integer, db.ForeignKey('user_id')) 
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id')) 
