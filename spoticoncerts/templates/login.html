@@ -3,25 +3,10 @@
 {% block title %}Login{% endblock %}
 
 {% block head %}
-    <center>
-        <h1>Login</h1>
-    </center>    
+    <h1>Login</h1>   
 {% endblock %}
 
-{% block content %}
-    <center>
-    <!--Flash message
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            <ul class=flashes>
-            {% for message in messages %}
-                <li>{{ message }}</li>
-            {% endfor %}
-            </ul>
-        {% endif %}
-    {% endwith %}
-    -->
-
+{% block content %} 
     <!-- Existent user login form -->
     <form action="/login" autocomplete="on" method="POST" enctype="multipart/form-data">
         <div class="mb-3">
@@ -34,7 +19,6 @@
         </div>
         <button type="submit" class="btn btn-primary">Login</button>
     </form>
-    </center>
 {% endblock %}
 
 
