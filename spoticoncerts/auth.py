@@ -1,9 +1,9 @@
-from unicodedata import category
 from flask import Blueprint, render_template, request, flash, url_for, redirect
 from .models import User
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import db
 from flask_login import login_user, login_required, logout_user, current_user
+from .spotify_auth import get_authorization
 
 #Set up blueprint for Flask application
 auth = Blueprint('auth', __name__)
@@ -52,7 +52,12 @@ def login():
                 flash('Logged in successfuly', category = 'success')
                 #Remember user who logged in
                 login_user(user, remember = True)
-                return redirect(url_for('views.dashboard'))
+
+                #Get authorization code from Spotify server
+                response = get_authorization()
+                url = response.url
+                return redirect(url)
+
             else:
                 flash('Incorrect password. Try again', category = 'error')
         else:
@@ -67,3 +72,5 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('auth.login'))
+
+
