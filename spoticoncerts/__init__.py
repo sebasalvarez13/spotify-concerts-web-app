@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from os import path
+from flask_login import LoginManager
 
 #Define new database
 db = SQLAlchemy()
@@ -26,6 +27,19 @@ def create_app():
 
     #Create database
     create_database(app)
+
+
+    #Tells our app how to manage user login/logout activity
+    login_manager = LoginManager()
+    #Where app should redirect when not logged in
+    login_manager.login_view = 'auth.login'
+    login_manager.init_app(app)
+
+    #Tells flask how we load a user
+    @login_manager.user_loader
+    def load_user(id):
+        #Tells flask what user we are looking for, referencing he id
+        return User.query.get(int(id)) #similar to filter by using the primary key
 
     return app
 
