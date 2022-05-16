@@ -60,6 +60,7 @@ def login():
 
     return render_template('login.html')
 
+
 @auth.route('/logout', methods = ['GET', 'POST'])
 #Decorator makes sure we can't access this route unles user is logged in
 @login_required 
