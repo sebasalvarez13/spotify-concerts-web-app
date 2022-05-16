@@ -28,7 +28,6 @@ def create_app():
     #Create database
     create_database(app)
 
-
     #Tells our app how to manage user login/logout activity
     login_manager = LoginManager()
     #Where app should redirect when not logged in
@@ -42,6 +41,7 @@ def create_app():
         return User.query.get(int(id)) #similar to filter by using the primary key
 
     return app
+
 
 def create_database(app):
     #Check if db exists. If not create it
