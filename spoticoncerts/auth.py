@@ -34,7 +34,7 @@ def register():
             db.session.commit()
             #Remember user who logged in
             login_user(user, remember = True)
-            return redirect(url_for('views.home'))
+            return redirect(url_for('views.dashboard'))
     
     return render_template('register.html')
 
@@ -52,7 +52,7 @@ def login():
                 flash('Logged in successfuly', category = 'success')
                 #Remember user who logged in
                 login_user(user, remember = True)
-                return redirect(url_for('views.home'))
+                return redirect(url_for('views.dashboard'))
             else:
                 flash('Incorrect password. Try again', category = 'error')
         else:
