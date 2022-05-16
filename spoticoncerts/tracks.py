@@ -1,6 +1,9 @@
+from datetime import datetime
 import pandas
 import requests
-
+import re
+import datetime
+from datetime import timezone
 
 class Track():
     def __init__(self, spotify_token):
@@ -35,13 +38,13 @@ class Track():
         song_uri_list = []
 
         #Iterate through API results and populate lists
-        api_data = self.get_tracks()
+        api_tracks = self.get_tracks()
 
-        for track in api_data['items']:
+        for track in api_tracks['items']:
             songs_list.append(track['track']['name'])
             artist_list.append(track['track']['album']['artists'][0]['name'])
             album_list.append(track['track']['album']['name'])
-            played_at_list.append(track['played_at'])
+            played_at_list.append(self.format_played_at(track['played_at']))
             song_uri_list.append(track['track']['uri'])
 
         #Create a dictionary and add the lists (values) to their respective key
@@ -57,6 +60,26 @@ class Track():
         df = pandas.DataFrame(track_dict, columns = track_dict.keys())
 
         return(df)
+
+
+    def format_played_at(self, spotify_time):
+        '''Changes format for 'played_at' so it can be inserted into mysql database and converts time from UTC to local time.'''
+        '''Returns df with correct datetime format'''
+
+        #Spotify returns time as a string in UTC. Filter string from  ".xxxZ" element
+        time_fltrd = re.search('[0-9]+\-[0-9]+\-[0-9]+T[0-9]+\:[0-9]+\:[0-9]+', spotify_time)
+
+        #Convert time string to datetime object
+        spotify_time_obj = datetime.datetime.strptime(time_fltrd.group(), '%Y-%m-%dT%H:%M:%S') 
+
+        #Convert datetime object in UTC to local time
+        local_time_obj = spotify_time_obj.replace(tzinfo=timezone.utc).astimezone(tz=None)
+
+        #Convert time object to string in correct sql datetime format
+        sql_time_str = local_time_obj.strftime('%Y-%m-%d %H:%M:%S')
+
+        return sql_time_str
+
 
     def display_tracks(self):
         #Converts dataframe to html table
