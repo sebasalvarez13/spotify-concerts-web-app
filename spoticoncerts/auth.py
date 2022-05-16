@@ -59,3 +59,10 @@ def login():
             flash('Username does not exist', category = 'error')
 
     return render_template('login.html')
+
+@auth.route('/logout', methods = ['GET', 'POST'])
+#Decorator makes sure we can't access this route unles user is logged in
+@login_required 
+def logout():
+    logout_user()
+    return redirect(url_for('auth.login'))
