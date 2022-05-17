@@ -2,10 +2,12 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from os import path
 from flask_login import LoginManager
+from .secrets import user, password, host, port
+import pymysql
 
 #Define new database
 db = SQLAlchemy()
-DB_NAME = 'database.db'
+DB_NAME = 'spoticoncerts'
 
 def create_app():
     app = Flask(__name__)
@@ -13,7 +15,9 @@ def create_app():
     app.config['SECRET_KEY'] = 'asdfghjkl'
 
     #Define database: 'my sqlalchemy database is stored at this location'
-    app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_NAME}'
+    #app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_NAME}'
+    app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{user}:{password}@{host}:{port}/{DB_NAME}'
+
     #Initialize database: tells database which app we are going to use with it
     db.init_app(app)
     
