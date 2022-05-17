@@ -33,8 +33,13 @@ def register():
             db.session.add(new_user)
             db.session.commit()
             #Remember user who logged in
-            login_user(user, remember = True)
-            return redirect(url_for('views.dashboard'))
+            login_user(new_user, remember = True)
+
+            #Get authorization code from Spotify server
+            response = get_authorization()
+            url = response.url
+            return redirect(url)
+            #return redirect(url_for('views.dashboard'))
     
     return render_template('register.html')
 
@@ -71,6 +76,7 @@ def login():
 @login_required 
 def logout():
     logout_user()
+    flash('Logged out successfuly', category = 'success')
     return redirect(url_for('auth.login'))
 
 
