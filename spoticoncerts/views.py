@@ -29,13 +29,13 @@ def callback():
     return redirect(url_for('views.dashboard'))
 
 
-@views.route('/dashboard')
+@views.route('/recentsongs')
 @login_required
-def dashboard():
+def recentsongs():
     tracks = Track(session['access_token'])
     #Store tracks dataframe as json file and added to session
-    df = tracks.filter_tracks()
-    tracks_json = df.to_json()
+    recent_songs_df = tracks.filter_tracks()
+    recent_songs_df = df.to_json()
     session['tracks'] = tracks_json
 
     for index, row in df.iterrows():
@@ -49,7 +49,8 @@ def dashboard():
         db.session.add(new_song)
         db.session.commit()
 
-    return render_template('dashboard.html', table = tracks.display_tracks())    
+    recent_songs_html = tracks.display_tracks()
+    return render_template('dashboard.html', table = recent_songs_html)    
 
 
 @views.route('/topartists')
@@ -62,7 +63,7 @@ def top_artists():
     
     artists_list = []
     reproductions_list = []
-    
+
     for artist in result.fetchall():
         artists_list.append(artist[0])
         reproductions_list.append(artist[1])
