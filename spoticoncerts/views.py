@@ -32,8 +32,11 @@ def callback():
 @login_required
 def dashboard():
     tracks = Track(session['access_token'])
-    #New songs
+    #Store tracks dataframe as json file and added to session
     df = tracks.filter_tracks()
+    tracks_json = df.to_json()
+    session['tracks'] = tracks_json
+
     for index, row in df.iterrows():
         new_song = Song(
             song = row['song'],
@@ -44,4 +47,16 @@ def dashboard():
         )
         db.session.add(new_song)
         db.session.commit()
+
     return render_template('dashboard.html', table = tracks.display_tracks())    
+
+
+@views.route('/top_artists')
+@login_required
+def top_artists():
+    #Open sql script. Script limit sets to 5
+    with open('db_queries/user_top_artists.sql', 'r') as sql_file:
+        query = sql_file.read()
+    db.session.query(query)
+    
+    return render_template('dashboard.html', table = tracks.display_tracks()) 
