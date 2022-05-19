@@ -26,7 +26,7 @@ def callback():
         #Store accesss token in Session key
         session['access_token'] = token_response['access_token']
 
-    return redirect(url_for('views.dashboard'))
+    return redirect(url_for('views.recentsongs'))
 
 
 @views.route('/recentsongs')
@@ -35,10 +35,10 @@ def recentsongs():
     tracks = Track(session['access_token'])
     #Store tracks dataframe as json file and added to session
     recent_songs_df = tracks.filter_tracks()
-    recent_songs_df = df.to_json()
+    tracks_json = recent_songs_df.to_json()
     session['tracks'] = tracks_json
 
-    for index, row in df.iterrows():
+    for index, row in recent_songs_df.iterrows():
         new_song = Song(
             song = row['song'],
             artist = row['artist'],
