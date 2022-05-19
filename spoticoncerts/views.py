@@ -4,6 +4,7 @@ from .tracks import Track
 from .spotify_auth import get_token
 from .models import Song
 from . import db
+import pandas as pd
 
 
 #Set up blueprint for Flask application
@@ -51,12 +52,27 @@ def dashboard():
     return render_template('dashboard.html', table = tracks.display_tracks())    
 
 
-@views.route('/top_artists')
+@views.route('/topartists')
 @login_required
 def top_artists():
     #Open sql script. Script limit sets to 5
-    with open('db_queries/user_top_artists.sql', 'r') as sql_file:
+    with open('spoticoncerts/db_queries/user_top_artists.sql', 'r') as sql_file:
         query = sql_file.read()
-    db.session.query(query)
+    result = db.session.execute(query, {'val':current_user.get_id()})
     
-    return render_template('dashboard.html', table = tracks.display_tracks()) 
+    artists_list = []
+    reproductions_list = []
+    
+    for artist in result.fetchall():
+        artists_list.append(artist[0])
+        reproductions_list.append(artist[1])
+
+    top_artists_dict = {'artist': artists_list, 'reproductions': reproductions_list}
+
+    #Create dataframe with artist name and reproductions
+    top_artists_df = pd.DataFrame(top_artists_dict, columns = top_artists_dict.keys())
+    
+    #Converts dataframe to html table
+    top_artists_html = top_artists_df.to_html(classes = "table table-dark table-striped", justify = 'left')
+
+    return render_template('dashboard.html', table = top_artists_html) 
