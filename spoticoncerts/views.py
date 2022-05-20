@@ -89,7 +89,8 @@ def concerts():
     concert = Concert(session['top_artists'])
     concerts_df = concert.filter_concert_data()
 
-    #Converts dataframe to html table
+    #Converts dataframe to html. Drop Id column before displaying on html 
+    concerts_df = concerts_df.drop(['id'], axis=1)
     concerts_html = concerts_df.to_html(classes = "table table-dark table-striped", justify = 'left')
 
     return render_template('dashboard.html', table = concerts_html)
