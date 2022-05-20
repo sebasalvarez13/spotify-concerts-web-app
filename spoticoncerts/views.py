@@ -33,24 +33,31 @@ def callback():
 @views.route('/recentsongs')
 @login_required
 def recentsongs():
-    tracks = Track(session['access_token'])
-    #Store tracks dataframe as json file and added to session
-    recent_songs_df = tracks.filter_tracks()
-    tracks_json = recent_songs_df.to_json()
-    session['tracks'] = tracks_json
+    if session['tracks']:
+        recent_songs_df = pd.read_json(session['tracks'])
+        recent_songs_html = recent_songs_df.to_html(classes = "table table-dark table-striped", justify = 'left')
+    else:    
+        tracks = Track(session['access_token'])
+        recent_songs_df = tracks.filter_tracks()
+        
+        #Iterate through dataframe and upload rows to Song db model
+        for index, row in recent_songs_df.iterrows():
+            new_song = Song(
+                song = row['song'],
+                artist = row['artist'],
+                album = row['album'],
+                played_at = row['played_at'],
+                user_id = current_user.get_id()
+            )
+            db.session.add(new_song)
+            db.session.commit()
 
-    for index, row in recent_songs_df.iterrows():
-        new_song = Song(
-            song = row['song'],
-            artist = row['artist'],
-            album = row['album'],
-            played_at = row['played_at'],
-            user_id = current_user.get_id()
-        )
-        db.session.add(new_song)
-        db.session.commit()
-
-    recent_songs_html = tracks.display_tracks()
+        #Store tracks dataframe as json file and added to session
+        recent_songs_json = recent_songs_df.to_json()
+        session['tracks'] = recent_songs_json
+        
+        #Converts dataframe to html table    
+        recent_songs_html = tracks.display_tracks()
     return render_template('dashboard.html', table = recent_songs_html)    
 
 
