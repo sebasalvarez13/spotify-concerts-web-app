@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, session, request, redirect, url_for
 from flask_login import login_required, current_user
 from .tracks import Track
+from .concerts import Concert
 from .spotify_auth import get_token
 from .models import Song
 from . import db
@@ -70,6 +71,9 @@ def top_artists():
 
     top_artists_dict = {'artist': artists_list, 'reproductions': reproductions_list}
 
+    #Save top artists list as a session key to use as parameter for Concert() object
+    session['top_artists'] = artists_list
+
     #Create dataframe with artist name and reproductions
     top_artists_df = pd.DataFrame(top_artists_dict, columns = top_artists_dict.keys())
     
@@ -77,3 +81,17 @@ def top_artists():
     top_artists_html = top_artists_df.to_html(classes = "table table-dark table-striped", justify = 'left')
 
     return render_template('dashboard.html', table = top_artists_html) 
+
+
+@views.route('/concerts')
+@login_required
+def concerts():
+    concert = Concert(session['top_artists'])
+    concerts_df = concert.filter_concert_data()
+
+    #Converts dataframe to html table
+    concerts_html = concerts_df.to_html(classes = "table table-dark table-striped", justify = 'left')
+
+    return render_template('dashboard.html', table = concerts_html)
+
+
