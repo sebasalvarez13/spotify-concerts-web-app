@@ -54,7 +54,6 @@ def login():
         user = User.query.filter_by(username = username).first() #returns first result
         if user:
             if check_password_hash(user.password, password):
-                flash('Logged in successfuly', category = 'success')
                 #Remember user who logged in
                 login_user(user, remember = True)
 
@@ -76,7 +75,6 @@ def login():
 @login_required 
 def logout():
     logout_user()
-    flash('Logged out successfuly', category = 'success')
     return redirect(url_for('views.home'))
 
 
