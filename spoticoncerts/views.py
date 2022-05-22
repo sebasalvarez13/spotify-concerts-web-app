@@ -33,7 +33,7 @@ def callback():
 @views.route('/recentsongs')
 @login_required
 def recentsongs():
-    if session['tracks']:
+    if 'tracks' in session.keys():
         recent_songs_df = pd.read_json(session['tracks'])
         recent_songs_html = recent_songs_df.to_html(classes = "table table-dark table-striped", justify = 'left')
     else:    
