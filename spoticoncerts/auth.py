@@ -77,6 +77,6 @@ def login():
 def logout():
     logout_user()
     flash('Logged out successfuly', category = 'success')
-    return redirect(url_for('auth.login'))
+    return redirect(url_for('views.home'))
 
 
